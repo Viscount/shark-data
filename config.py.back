@@ -1,0 +1,20 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+MYSQL = {
+    'host': 'host',
+    'port': port,
+    'user': 'user',
+    'passwd': 'passwd',
+    'db': 'db',
+    'charset': 'utf8',
+    'use_unicode': True
+}
+
+MONGO = {
+    'host': 'host',
+    'port': port,
+    'db': 'db',
+    'user': 'user',
+    'passwd': 'passwd',
+}
