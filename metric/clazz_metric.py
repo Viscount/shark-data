@@ -4,6 +4,9 @@
 from service import clazz_service
 
 
+# 班级数
+# 返回值：平台开设班级的数量
+# 返回类型：int
 def clazz_count():
     return (len(clazz_service.get_class_count()))
 
