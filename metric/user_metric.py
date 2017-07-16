@@ -1,16 +1,16 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from service import user_service
+from service import purchase_service
 
 
-def paid_user_count():
-    record_list = user_service.get_paid_users()
+def paid_user_list():
+    record_list = purchase_service.get_purchase_records()
     user_set = set()
     for record in record_list:
-        user_set.add(record[7])
-    return len(user_set)
+        user_set.add(record.userId)
+    return user_set
 
 
 if __name__ == "__main__":
-    print paid_user_count()
+    print len(paid_user_list())
