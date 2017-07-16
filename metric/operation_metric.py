@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from datetime import *
 from service import purchase_service
 
 
@@ -36,5 +37,62 @@ def overall_re_purchasing_rate():
     return one_time_ptg, two_times_ptg, multi_times_ptg
 
 
+# 新老学员比例
+# 参数：统计区间天数，如30就是一月内
+# 参数类型：int
+# 返回值：（新学员比例，老学员比例）
+# 返回类型：tuple
+def student_type_ratio(time_backward_days=30):
+    time_constraint = datetime.today()-timedelta(days=time_backward_days)
+    purchase_record_list = purchase_service.get_purchase_records()
+    # 从购买列表中按时间分离出统计范围内和统计范围外的用户并计数
+    in_bound_user_count = set()
+    out_bound_user_count = set()
+    for record in purchase_record_list:
+        if record.joinDate > time_constraint:
+            in_bound_user_count.add(record.userId)
+        else:
+            out_bound_user_count.add(record.userId)
+    re_purchase_user_count = 0
+    for userId in in_bound_user_count:
+        if userId in out_bound_user_count:
+            re_purchase_user_count += 1
+    frequent_student_ratio = re_purchase_user_count * 1.0 / len(in_bound_user_count)
+    new_student_ratio = 1 - frequent_student_ratio
+    return new_student_ratio, frequent_student_ratio
+
+
+# 复购人次
+# 参数：统计区间天数，如30就是一月内
+# 参数类型：int
+# 返回值：（新学员比例，老学员比例）
+# 返回类型：tuple
+def re_purchase_count(time_backward_days=30):
+    time_constraint = datetime.today()-timedelta(days=time_backward_days)
+    purchase_record_list = purchase_service.get_purchase_records()
+    # 从购买列表中按时间分离出统计范围内和统计范围外的用户并计数
+    in_bound_user_pay_count = dict()
+    out_bound_user_pay_count = dict()
+    for record in purchase_record_list:
+        if record.joinDate > time_constraint:
+            if str(record.userId) in in_bound_user_pay_count:
+                in_bound_user_pay_count[str(record.userId)] += 1
+            else:
+                in_bound_user_pay_count[str(record.userId)] = 1
+        else:
+            if str(record.userId) in out_bound_user_pay_count:
+                out_bound_user_pay_count[str(record.userId)] += 1
+            else:
+                out_bound_user_pay_count[str(record.userId)] = 1
+    re_purchase_times_count = 0
+    for userId in in_bound_user_pay_count:
+        pay_count = in_bound_user_pay_count[userId]
+        if userId in out_bound_user_pay_count:
+            re_purchase_times_count += pay_count
+    return re_purchase_times_count
+
+
 if __name__ == "__main__":
-    print overall_re_purchasing_rate()
+    # print overall_re_purchasing_rate()
+    # print student_type_ratio()
+    print re_purchase_count()
