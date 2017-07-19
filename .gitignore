@@ -102,3 +102,4 @@ ENV/
 config.py
 .idea/
 config.py.online
+config.py.local
