@@ -10,7 +10,7 @@ from service import clazz_service, user_service
 # 返回值：平台开设班级的数量
 # 返回类型：int
 def clazz_count():
-    return (len(clazz_service.get_clazz_count()))
+    return len(clazz_service.get_all_clazz())
 
 
 # 一段时间内打卡次数不足用户名单
@@ -56,4 +56,3 @@ if __name__ == "__main__":
     print len(name_list)
     for user in name_list:
         print user.name + " " + user.student_number
-        print "\n"

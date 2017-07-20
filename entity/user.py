@@ -9,3 +9,8 @@ class User(object):
         self.student_number = query_result_item[12]
         self.openId = query_result_item[16]
         self.unionId = query_result_item[17]
+        self.created_at = query_result_item[22]
+
+    def csv_format(self):
+        content = [unicode(self.name), self.student_number, self.created_at]
+        return content

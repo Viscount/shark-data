@@ -3,15 +3,18 @@
 
 from pytz import reference
 from datetime import *
+from bson import ObjectId
 from connection.connector_singleton import *
 from entity.clazz_account import ClazzAccount
 from entity.checkin import Checkin
 from entity.clazz import Clazz
 
 
-def get_clazz_count():
+def get_all_clazz():
     model = MongoConnModel.get_instance()
-    clazz_list = model.find('Clazz', {}, multi=True)
+    clazz_list = model.find("Clazz", {}, multi=True)
+    if clazz_list is None:
+        return []
     clazz_obj_list = []
     for clazz_record in clazz_list:
         clazz_obj = Clazz(clazz_record)
@@ -21,7 +24,27 @@ def get_clazz_count():
 
 def get_active_clazz():
     model = MongoConnModel.get_instance()
-    clazz_list = model.find('Clazz', {'status': 'PROCESSING'}, multi=True)
+    clazz_list = model.find("Clazz", {"status": 'PROCESSING'}, multi=True)
+    if clazz_list is None:
+        return []
+    clazz_obj_list = []
+    for clazz_record in clazz_list:
+        clazz_obj = Clazz(clazz_record)
+        clazz_obj_list.append(clazz_obj)
+    return clazz_obj_list
+
+
+def get_clazz_by_ids(clazz_id_list):
+    clazz_objectId_list = []
+    for clazz_id in clazz_id_list:
+        if isinstance(clazz_id, ObjectId):
+            clazz_objectId_list.append(clazz_id)
+        else:
+            clazz_objectId_list.append(ObjectId(clazz_id))
+    model = MongoConnModel.get_instance()
+    clazz_list = model.find("Clazz", {"_id": {"$in": clazz_objectId_list}}, multi=True)
+    if clazz_list is None:
+        return []
     clazz_obj_list = []
     for clazz_record in clazz_list:
         clazz_obj = Clazz(clazz_record)
@@ -53,16 +76,6 @@ def get_clazz_checkin(clazz_id, start_date, end_date):
 
 
 if __name__ == "__main__":
-    clazz_list = get_active_clazz()
-    print clazz_list[14].name
-    start_date = datetime(datetime.today().year,
-                          datetime.today().month,
-                          datetime.today().day,
-                          tzinfo=reference.LocalTimezone())-timedelta(days=1)
-    end_date = datetime(datetime.today().year,
-                        datetime.today().month,
-                        datetime.today().day,
-                        tzinfo=reference.LocalTimezone())
-    print start_date
-    print end_date
-    print len(get_clazz_checkin(clazz_list[14].id, start_date, end_date))
+    list = get_active_clazz()
+    clazz_list = get_clazz_by_ids([list[0].id, list[1].id])
+    print len(clazz_list)
