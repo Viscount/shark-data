@@ -4,6 +4,10 @@
 import codecs
 import csv
 
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
+
 
 def export2csv(file_name, content_list):
     with codecs.open(file_name, "wb", encoding="utf-8") as f:

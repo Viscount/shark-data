@@ -4,6 +4,7 @@
 from datetime import *
 from pytz import reference
 from service import clazz_service, user_service
+from util import export_service
 
 
 # 班级数
@@ -40,19 +41,21 @@ def uncheck_clazz_users(clazz_id, start_date, end_date, limit):
 
 if __name__ == "__main__":
     print clazz_count()
-    clazz_list = clazz_service.get_active_clazz()
-    print clazz_list[14].name
-    start_date = datetime(datetime.today().year,
-                          datetime.today().month,
-                          datetime.today().day,
-                          tzinfo=reference.LocalTimezone()) - timedelta(days=7)
-    end_date = datetime(datetime.today().year,
-                        datetime.today().month,
-                        datetime.today().day,
-                        tzinfo=reference.LocalTimezone())
-    print start_date
-    print end_date
-    name_list = uncheck_clazz_users(clazz_list[14].id, start_date, end_date, 4)
-    print len(name_list)
-    for user in name_list:
-        print user.name + " " + user.student_number
+    # clazz_list = clazz_service.get_active_clazz()
+    # print clazz_list[8].name
+    # start_date = datetime(datetime.today().year,
+    #                       datetime.today().month,
+    #                       datetime.today().day,
+    #                       tzinfo=reference.LocalTimezone()) - timedelta(days=7)
+    # end_date = datetime(datetime.today().year,
+    #                     datetime.today().month,
+    #                     datetime.today().day,
+    #                     tzinfo=reference.LocalTimezone())
+    # print start_date
+    # print end_date
+    # name_list = uncheck_clazz_users(clazz_list[8].id, start_date, end_date, 4)
+    # print len(name_list)
+    # content_list = []
+    # for user in name_list:
+    #     content_list.append(user.csv_format())
+    # export_service.export2csv('Eng.csv', content_list)
