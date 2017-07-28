@@ -12,3 +12,7 @@ class Clazz(object):
         self.name = query_result_item["name"]
         self.author = query_result_item["author"]
         self.open_date = query_result_item["openDate"]
+
+    def csv_format(self):
+        content = [self.id, self.name, self.status, self.clazz_type, self.open_date, self.start_date, self.end_date]
+        return content

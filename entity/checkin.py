@@ -8,3 +8,7 @@ class Checkin(object):
         self.status = query_result_item["status"]
         self.userId = query_result_item["userId"]
         self.checkin_time = query_result_item["checkinTime"]
+
+    def csv_format(self):
+        content = [self.id, self.userId, self.status, self.checkin_time]
+        return content
