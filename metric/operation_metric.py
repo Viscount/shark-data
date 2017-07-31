@@ -93,6 +93,9 @@ def re_purchase_count(time_backward_days=30):
 
 
 if __name__ == "__main__":
+    # 总体复购率
     # print overall_re_purchasing_rate()
+    # 新老学员比例
     # print student_type_ratio()
-    print re_purchase_count()
+    # 复购次数
+    print re_purchase_count(180)

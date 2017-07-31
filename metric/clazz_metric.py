@@ -40,41 +40,40 @@ def uncheck_clazz_users(clazz_id, start_date, end_date, limit):
 
 
 if __name__ == "__main__":
-    print clazz_count()
+    # print clazz_count()
     # 统计一周各班打卡次数不合格者
-    # clazz_list = clazz_service.get_active_clazz()
-    # print clazz_list[8].name
-    # start_date = datetime(datetime.today().year,
-    #                       datetime.today().month,
-    #                       datetime.today().day,
-    #                       tzinfo=reference.LocalTimezone()) - timedelta(days=7)
-    # end_date = datetime(datetime.today().year,
-    #                     datetime.today().month,
-    #                     datetime.today().day,
-    #                     tzinfo=reference.LocalTimezone())
-    # print start_date
-    # print end_date
-    # name_list = uncheck_clazz_users(clazz_list[8].id, start_date, end_date, 4)
-    # print len(name_list)
-    # content_list = []
-    # for user in name_list:
-    #     content_list.append(user.csv_format())
-    # export_service.export2csv('Eng.csv', content_list)
+    clazz_object = clazz_service.get_clazz_by_name("创意编程班-S2")
+    start_date = datetime(datetime.today().year,
+                          datetime.today().month,
+                          datetime.today().day,
+                          tzinfo=reference.LocalTimezone()) - timedelta(days=7)
+    end_date = datetime(datetime.today().year,
+                        datetime.today().month,
+                        datetime.today().day,
+                        tzinfo=reference.LocalTimezone())
+    print start_date
+    print end_date
+    name_list = uncheck_clazz_users(clazz_object.id, start_date, end_date, 4)
+    print len(name_list)
+    content_list = []
+    for user in name_list:
+        content_list.append(user.csv_format())
+    export_service.export2csv('Eng.csv', content_list)
     # 输出班级打卡情况
-    clazz_object = clazz_service.get_clazz_by_name("语法训练班")
-    export_service.export2csv('grammar_class.csv', [clazz_object.csv_format()])
-    user_id_list = clazz_service.get_clazz_users(clazz_object.id)
-    user_obj_list = user_service.get_users_by_ids(user_id_list)
-    content_list = []
-    for user in user_obj_list:
-        content_list.append(user.csv_format(privacy=True))
-    export_service.export2csv('grammar_class_users.csv', content_list)
-    checkin_list = clazz_service.get_clazz_checkin(clazz_object.id, clazz_object.start_date, clazz_object.end_date)
-    content_list = []
-    for checkin in checkin_list:
-        content_list.append(checkin.csv_format())
-    export_service.export2csv('grammar_class_checkins.csv', content_list)
-    print len(user_id_list)
-    print len(checkin_list)
+    # clazz_object = clazz_service.get_clazz_by_name("语法训练班")
+    # export_service.export2csv('grammar_class.csv', [clazz_object.csv_format()])
+    # user_id_list = clazz_service.get_clazz_users(clazz_object.id)
+    # user_obj_list = user_service.get_users_by_ids(user_id_list)
+    # content_list = []
+    # for user in user_obj_list:
+    #     content_list.append(user.csv_format(privacy=True))
+    # export_service.export2csv('grammar_class_users.csv', content_list)
+    # checkin_list = clazz_service.get_clazz_checkin(clazz_object.id, clazz_object.start_date, clazz_object.end_date)
+    # content_list = []
+    # for checkin in checkin_list:
+    #     content_list.append(checkin.csv_format())
+    # export_service.export2csv('grammar_class_checkins.csv', content_list)
+    # print len(user_id_list)
+    # print len(checkin_list)
 
 

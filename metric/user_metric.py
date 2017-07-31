@@ -42,6 +42,7 @@ def paid_user_dict_by_times(times):
 
 if __name__ == "__main__":
     print paid_user_count()
+    # 输出购买指定次数的名单
     # user_clazz_id_dict = paid_user_dict_by_times(1)
     # user_ids_all = user_clazz_id_dict.keys()
     # clazz_ids_all = set()

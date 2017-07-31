@@ -18,4 +18,4 @@ def get_purchase_records(time_constraint=datetime.date(2016, 1, 1)):
 
 
 if __name__ == "__main__":
-    print len(get_purchase_records())
+    print len(get_purchase_records(time_constraint=datetime.date(2017, 7, 1)))
