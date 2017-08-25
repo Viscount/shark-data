@@ -58,7 +58,7 @@ def get_clazz_by_ids(clazz_id_list):
     return clazz_obj_list
 
 
-def get_clazz_users(clazz_id):
+def get_clazz_users_id(clazz_id):
     model = MysqlConnModel.get_instance()
     clazz_account_list = model.find("clazz_account", {"status": ["PROCESSING", "WAITENTER", "CLOSE"],
                                                       "clazzId": clazz_id}, multi=True)

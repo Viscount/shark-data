@@ -5,6 +5,12 @@ from datetime import *
 from service import purchase_service
 
 
+# 购买次数
+def purchase_count(time_constraint):
+    purchase_list = purchase_service.get_purchase_records(time_constraint)
+    return len(purchase_list)
+
+
 # 总体复购率
 # 返回值：（一次购买率，二次购买率，多次购买率）
 # 返回类型：tuple
@@ -93,9 +99,11 @@ def re_purchase_count(time_backward_days=30):
 
 
 if __name__ == "__main__":
+    # 购买次数
+    print purchase_count(datetime.today()-timedelta(days=30))
     # 总体复购率
     # print overall_re_purchasing_rate()
     # 新老学员比例
-    # print student_type_ratio()
+    # print student_type_ratio(180)
     # 复购次数
-    print re_purchase_count(180)
+    # print re_purchase_count(180)
