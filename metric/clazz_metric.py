@@ -3,6 +3,7 @@
 
 from service import clazz_service, user_service, purchase_service
 from util import date_service
+import codecs
 
 
 # 班级数
@@ -14,8 +15,8 @@ def clazz_count():
 
 # 按月份累计开设班级数
 # 参数：统计开始时间
-# 参数类型：datetime
-# 返回值：月份与班级数对应列表
+# 参数类型：string，满足日期格式"%Y-%m-%d"
+# 返回值：月份与班级数对应字典
 # 返回类型：dict（月份：班级数）
 def clazz_count_series(start_date="2016-07-01"):
     timeline = date_service.get_between_month(start_date)
@@ -23,6 +24,16 @@ def clazz_count_series(start_date="2016-07-01"):
     for month in timeline:
         clazz_count_dict[month.name] = len(clazz_service.get_all_clazz(month.start_date))
     return clazz_count_dict
+
+
+def clazz_teachers():
+    clazz_list = clazz_service.get_all_clazz()
+    teacher_set = set()
+    for clazz in clazz_list:
+        teachers = clazz.author.split("&")
+        for teacher in teachers:
+            teacher_set.add(teacher.strip())
+    return teacher_set
 
 
 # 班级内新用户名单
@@ -72,7 +83,11 @@ def uncheck_clazz_users(clazz_id, start_date, end_date, limit):
 
 
 if __name__ == "__main__":
-    print clazz_count()
+    # print clazz_count()
+    teacher_set = clazz_teachers()
+    with codecs.open("teachers.txt", "w", encoding="utf-8") as f:
+        for teacher in teacher_set:
+            f.write(teacher+"\n")
     # 统计上周、本周各班打卡次数不合格者，并且统计了改善的人
     # clazz_object = clazz_service.get_clazz_by_name(" CATTI笔译12周训练营")
     # start_date = datetime(datetime.today().year,

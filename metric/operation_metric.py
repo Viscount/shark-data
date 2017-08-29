@@ -3,12 +3,24 @@
 
 from datetime import *
 from service import purchase_service
+from util import date_service
 
 
 # 购买次数
-def purchase_count(start_date, end_date):
-    purchase_list = purchase_service.get_purchase_records(start_date,end_date)
+def purchase_count(start_date="2016-01-01", end_date=datetime.now().strftime("%Y-%m-%d")):
+    start_date = datetime.strptime(start_date, "%Y-%m-%d")
+    end_date = datetime.strptime(end_date, "%Y-%m-%d")
+    purchase_list = purchase_service.get_purchase_records(start_date, end_date)
     return len(purchase_list)
+
+
+# 购买次数，按月统计
+def purchase_count_series(start_date="2016-07-01"):
+    timeline = date_service.get_between_month(start_date)
+    purchase_count_dict = dict()
+    for month in timeline:
+        purchase_count_dict[month.name] = len(purchase_service.get_purchase_records(end_date=month.start_date))
+    return purchase_count_dict
 
 
 # 总体复购率
@@ -100,10 +112,10 @@ def re_purchase_count(time_backward_days=30):
 
 if __name__ == "__main__":
     # 购买次数
-    # print purchase_count(datetime.today()-timedelta(days=30))
+    print purchase_count()
     # 总体复购率
     # print overall_re_purchasing_rate()
     # 新老学员比例
     # print student_type_ratio(180)
     # 复购次数
-    print re_purchase_count(180)
+    # print re_purchase_count(180)

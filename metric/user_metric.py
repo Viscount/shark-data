@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from service import purchase_service, user_service, clazz_service
-from util import export_service
+from util import export_service, date_service
 
 
 # 付费用户数
@@ -14,6 +14,45 @@ def paid_user_count():
     for record in record_list:
         user_set.add(record.userId)
     return len(user_set)
+
+
+# 付费用户数，按月统计
+# 参数：统计开始时间
+# 参数类型：string，满足日期格式"%Y-%m-%d"
+# 返回值：月份与付费用户数对应字典
+# 返回类型：dict（月份：用户数）
+def paid_user_count_series(start_date="2016-07-01"):
+    timeline = date_service.get_between_month(start_date)
+    paid_user_count_dict = dict()
+    for month in timeline:
+        record_list = purchase_service.get_purchase_records(end_date=month.start_date)
+        user_set = set()
+        for record in record_list:
+            user_set.add(record.userId)
+        paid_user_count_dict[month.name] = len(user_set)
+    return paid_user_count_dict
+
+
+# 关注用户数
+# 返回值：曾经关注公众号的用户数量
+# 返回类型：int
+def subscribe_user_count():
+    user_list = user_service.get_users()
+    return len(user_list)
+
+
+# 关注用户数，按月统计
+# 参数：统计开始时间
+# 参数类型：string，满足日期格式"%Y-%m-%d"
+# 返回值：月份与关注用户数对应字典
+# 返回类型：dict（月份：用户数）
+def subscribe_user_count_series(start_date="2016-07-01"):
+    timeline = date_service.get_between_month(start_date)
+    sub_user_count_dict = dict()
+    for month in timeline:
+        user_list = user_service.get_users(end_date=month.start_date)
+        sub_user_count_dict[month.name] = len(user_list)
+    return sub_user_count_dict
 
 
 # 购买指定课程数量的用户名单
@@ -41,7 +80,10 @@ def paid_user_dict_by_times(times):
 
 
 if __name__ == "__main__":
-    print paid_user_count()
+    # 关注用户数
+    print subscribe_user_count()
+    # 付费用户数
+    # print paid_user_count()
     # 输出购买指定次数的名单
     # user_clazz_id_dict = paid_user_dict_by_times(1)
     # user_ids_all = user_clazz_id_dict.keys()

@@ -2,12 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from entity.user import User
+import datetime
 from connection.connector_singleton import *
 
 
-def get_users():
+def get_users(start_date=datetime.date(2016, 1, 1), end_date=datetime.date.today()):
     model = MysqlConnModel.get_instance()
-    user_list = model.find("user", {}, multi=True)
+    user_list = model.find("user", {"createdAt": {"$gt": start_date, "$lt": end_date}}, multi=True)
     user_obj_list = []
     for user_record in user_list:
         user_obj = User(user_record)
