@@ -10,9 +10,9 @@ from entity.checkin import Checkin
 from entity.clazz import Clazz
 
 
-def get_all_clazz():
+def get_all_clazz(time_constraint=datetime.now()):
     model = MongoConnModel.get_instance()
-    clazz_list = model.find("Clazz", {}, multi=True)
+    clazz_list = model.find("Clazz", {"createdAt": {"$lte": time_constraint}}, multi=True)
     if clazz_list is None:
         return []
     clazz_obj_list = []

@@ -1,10 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from datetime import *
-from pytz import reference
 from service import clazz_service, user_service, purchase_service
-from util import export_service
+from util import date_service
 
 
 # 班级数
@@ -12,6 +10,19 @@ from util import export_service
 # 返回类型：int
 def clazz_count():
     return len(clazz_service.get_all_clazz())
+
+
+# 按月份累计开设班级数
+# 参数：统计开始时间
+# 参数类型：datetime
+# 返回值：月份与班级数对应列表
+# 返回类型：dict（月份：班级数）
+def clazz_count_series(start_date="2016-07-01"):
+    timeline = date_service.get_between_month(start_date)
+    clazz_count_dict = dict()
+    for month in timeline:
+        clazz_count_dict[month.name] = len(clazz_service.get_all_clazz(month.start_date))
+    return clazz_count_dict
 
 
 # 班级内新用户名单
@@ -61,31 +72,31 @@ def uncheck_clazz_users(clazz_id, start_date, end_date, limit):
 
 
 if __name__ == "__main__":
-    # print clazz_count()
+    print clazz_count()
     # 统计上周、本周各班打卡次数不合格者，并且统计了改善的人
-    clazz_object = clazz_service.get_clazz_by_name("听力训练班8月")
-    start_date = datetime(datetime.today().year,
-                          datetime.today().month,
-                          datetime.today().day,
-                          tzinfo=reference.LocalTimezone()) - timedelta(days=9)
-    end_date = datetime(datetime.today().year,
-                        datetime.today().month,
-                        datetime.today().day,
-                        tzinfo=reference.LocalTimezone()) - timedelta(days=2)
-    name_list = uncheck_clazz_users(clazz_object.id, start_date, end_date, 4)
-
-    print start_date
-    print end_date
-
-    content_list = []
-    for user in name_list:
-        content_list.append(user.csv_format())
-    export_service.export2csv('this_week.csv', content_list)
-
+    # clazz_object = clazz_service.get_clazz_by_name(" CATTI笔译12周训练营")
+    # start_date = datetime(datetime.today().year,
+    #                       datetime.today().month,
+    #                       datetime.today().day,
+    #                       tzinfo=reference.LocalTimezone()) - timedelta(days=7)
+    # end_date = datetime(datetime.today().year,
+    #                     datetime.today().month,
+    #                     datetime.today().day,
+    #                     tzinfo=reference.LocalTimezone())
+    # name_list = uncheck_clazz_users(clazz_object.id, start_date, end_date, 4)
+    #
+    # print start_date
+    # print end_date
+    #
+    # content_list = []
+    # for user in name_list:
+    #     content_list.append(user.csv_format())
+    # export_service.export2csv('this_week.csv', content_list)
+    #
     # last_week_start_date = datetime(datetime.today().year,
     #                        datetime.today().month,
     #                        datetime.today().day,
-    #                        tzinfo=reference.LocalTimezone()) - timedelta(days=12)
+    #                        tzinfo=reference.LocalTimezone()) - timedelta(days=14)
     # name_list_last_week = uncheck_clazz_users(clazz_object.id, last_week_start_date, start_date, 4)
     #
     # content_list = []
@@ -96,7 +107,7 @@ if __name__ == "__main__":
     # print last_week_start_date
     #
     # improved_user = []
-    # content_list = []
+    # content_list_imp = []
     # for user in name_list_last_week:
     #     flag = False
     #     for com_user in name_list:
@@ -105,9 +116,21 @@ if __name__ == "__main__":
     #             break
     #     if not flag:
     #         improved_user.append(user)
-    #         content_list.append(user.csv_format())
-    # export_service.export2csv('improved.csv', content_list)
-
+    #         content_list_imp.append(user.csv_format())
+    # export_service.export2csv('improved.csv', content_list_imp)
+    #
+    # new_user = []
+    # content_list_new = []
+    # for user in name_list:
+    #     flag = False
+    #     for com_user in name_list_last_week:
+    #         if com_user.id == user.id:
+    #             flag = True
+    #             break
+    #     if not flag:
+    #         new_user.append(user)
+    #         content_list_new.append(user.csv_format())
+    # export_service.export2csv('new_users.csv', content_list_new)
     # 输出班级新成员名单
     # clazz_object = clazz_service.get_clazz_by_name("法语基础班-S1")
     # user_list = new_student_for_clazz(clazz_object.id)

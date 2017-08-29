@@ -6,10 +6,10 @@ from connection.connector_singleton import *
 from entity.clazz_account import ClazzAccount
 
 
-def get_purchase_records(time_constraint=datetime.date(2016, 1, 1)):
+def get_purchase_records(start_date=datetime.date(2016, 1, 1), end_date=datetime.date.today()):
     model = MysqlConnModel.get_instance()
     clazz_account_list = model.find("clazz_account", {"status": ["PROCESSING", "WAITENTER", "CLOSE"],
-                                                         "joinDate": {"$gt": time_constraint}}, multi=True)
+                                                         "joinDate": {"$gt": start_date, "$lt": end_date}}, multi=True)
     clazz_account_object_list = []
     for record in clazz_account_list:
         clazz_account = ClazzAccount(record)
