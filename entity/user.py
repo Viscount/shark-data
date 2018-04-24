@@ -15,7 +15,8 @@ class User(object):
 
     def csv_format(self, privacy=False):
         if privacy:
-            content = [self.id, self.sex, self.city, self.student_number, self.created_at]
+            content = [self.id, unicode(self.name), self.sex, self.city, self.student_number, self.created_at]
         else:
-            content = [unicode(self.name), self.student_number, self.created_at]
+            # content = [self.id, unicode(self.name), self.student_number]
+            content = [unicode(self.name), self.student_number]
         return content

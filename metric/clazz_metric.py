@@ -1,8 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from datetime import datetime, date, timedelta
+from pytz import reference
 from service import clazz_service, user_service, purchase_service
-from util import date_service
+from util import date_service, export_service
 import codecs
 
 
@@ -57,6 +59,11 @@ def new_student_for_clazz(clazz_id):
     return user_service.get_users_by_ids(new_student_name_list)
 
 
+def students_for_clazz(clazz_id):
+    user_list = clazz_service.get_clazz_users_id(clazz_id)
+    return user_service.get_users_by_ids(user_list)
+
+
 # 一段时间内打卡次数不足用户名单
 # 参数：课程ID，统计开始时间，统计结束时间，最低次数要求
 # 参数类型：string, datetime. datetime, int
@@ -84,20 +91,23 @@ def uncheck_clazz_users(clazz_id, start_date, end_date, limit):
 
 if __name__ == "__main__":
     # print clazz_count()
-    teacher_set = clazz_teachers()
-    with codecs.open("teachers.txt", "w", encoding="utf-8") as f:
-        for teacher in teacher_set:
-            f.write(teacher+"\n")
+
+    # 统计输出老师名单
+    # teacher_set = clazz_teachers()
+    # with codecs.open("teachers.txt", "w", encoding="utf-8") as f:
+    #     for teacher in teacher_set:
+    #         f.write(teacher+"\n")
+
     # 统计上周、本周各班打卡次数不合格者，并且统计了改善的人
-    # clazz_object = clazz_service.get_clazz_by_name(" CATTI笔译12周训练营")
+    # clazz_object = clazz_service.get_clazz_by_name("CATTI一百天冲刺")
     # start_date = datetime(datetime.today().year,
     #                       datetime.today().month,
     #                       datetime.today().day,
-    #                       tzinfo=reference.LocalTimezone()) - timedelta(days=7)
+    #                       tzinfo=reference.LocalTimezone()) - timedelta(days=9)
     # end_date = datetime(datetime.today().year,
     #                     datetime.today().month,
     #                     datetime.today().day,
-    #                     tzinfo=reference.LocalTimezone())
+    #                     tzinfo=reference.LocalTimezone()) - timedelta(days=2)
     # name_list = uncheck_clazz_users(clazz_object.id, start_date, end_date, 4)
     #
     # print start_date
@@ -111,7 +121,7 @@ if __name__ == "__main__":
     # last_week_start_date = datetime(datetime.today().year,
     #                        datetime.today().month,
     #                        datetime.today().day,
-    #                        tzinfo=reference.LocalTimezone()) - timedelta(days=14)
+    #                        tzinfo=reference.LocalTimezone()) - timedelta(days=16)
     # name_list_last_week = uncheck_clazz_users(clazz_object.id, last_week_start_date, start_date, 4)
     #
     # content_list = []
@@ -146,6 +156,7 @@ if __name__ == "__main__":
     #         new_user.append(user)
     #         content_list_new.append(user.csv_format())
     # export_service.export2csv('new_users.csv', content_list_new)
+
     # 输出班级新成员名单
     # clazz_object = clazz_service.get_clazz_by_name("法语基础班-S1")
     # user_list = new_student_for_clazz(clazz_object.id)
@@ -155,19 +166,45 @@ if __name__ == "__main__":
     # export_service.export2csv("new_students.csv", contents)
 
     # 输出班级打卡情况
-    # clazz_object = clazz_service.get_clazz_by_name("语法训练班")
-    # export_service.export2csv('grammar_class.csv', [clazz_object.csv_format()])
-    # user_id_list = clazz_service.get_clazz_users(clazz_object.id)
-    # user_obj_list = user_service.get_users_by_ids(user_id_list)
-    # content_list = []
-    # for user in user_obj_list:
-    #     content_list.append(user.csv_format(privacy=True))
-    # export_service.export2csv('grammar_class_users.csv', content_list)
+    # clazz_object = clazz_service.get_clazz_by_id("5a0484e81aea5b3d99b9b664")
+    # user_id_list = clazz_service.get_clazz_users_id(clazz_object.id)
     # checkin_list = clazz_service.get_clazz_checkin(clazz_object.id, clazz_object.start_date, clazz_object.end_date)
-    # content_list = []
+    # user_checkin_count = dict()
     # for checkin in checkin_list:
-    #     content_list.append(checkin.csv_format())
-    # export_service.export2csv('grammar_class_checkins.csv', content_list)
+    #     if checkin.userId in user_checkin_count:
+    #         count = user_checkin_count[checkin.userId]
+    #         user_checkin_count[checkin.userId] = count + 1
+    #     else:
+    #         user_checkin_count[checkin.userId] = 1
+    # TABLE_HEADER = ["昵称", "学号", "打卡次数"]
+    # content_list = [TABLE_HEADER]
+    # for userId in user_checkin_count:
+    #     user = user_service.get_user_by_id(userId)
+    #     content = user.csv_format()
+    #     content.append(user_checkin_count[userId])
+    #     content_list.append(content)
+    # export_service.export2csv('class_checkins.csv', content_list)
+
+    # 输出班级用户名单
+    clazz_object = clazz_service.get_clazz_by_id("5abcd6537d60931cfe43749a")
+    purchase_record = purchase_service.get_purchase_records_for_clazz(clazz_object.id)
+    TABLE_HEADER = ["昵称", "学号"]
+    content_list = [TABLE_HEADER]
+    for record in purchase_record:
+        user = user_service.get_user_by_id(record.userId)
+        row_content = user.csv_format()
+        # row_content.append(record.joinDate)
+        content_list.append(row_content)
+    export_service.export2csv('40天冲刺.csv', content_list)
+
+    # 输出班级列表
+    # clazz_object = clazz_service.get_all_clazz()
+    # content_list = []
+    # for clazz in clazz_object:
+    #     content_list.append(clazz.csv_format())
+    # export_service.export2csv('clazz.csv', content_list)
+
+
 
 
 

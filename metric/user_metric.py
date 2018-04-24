@@ -3,6 +3,8 @@
 
 from service import purchase_service, user_service, clazz_service
 from util import export_service, date_service
+import datetime
+import json
 
 
 # 付费用户数
@@ -81,9 +83,11 @@ def paid_user_dict_by_times(times):
 
 if __name__ == "__main__":
     # 关注用户数
-    print subscribe_user_count()
+    # print subscribe_user_count()
+
     # 付费用户数
     # print paid_user_count()
+
     # 输出购买指定次数的名单
     # user_clazz_id_dict = paid_user_dict_by_times(1)
     # user_ids_all = user_clazz_id_dict.keys()
@@ -110,3 +114,74 @@ if __name__ == "__main__":
     #         content.append(clazz_lookup[clazz_id].name)
     #     content_list.append(content)
     # export_service.export2csv("1.csv", content_list)
+
+    # 输出所有付费用户的购买记录
+    # record_list = purchase_service.get_purchase_records()
+    # user_buy_dict = dict()
+    # for record in record_list:
+    #     if str(record.userId) in user_buy_dict:
+    #         pay_list = user_buy_dict[str(record.userId)]
+    #         pay_list.append(record.clazzId)
+    #         user_buy_dict[str(record.userId)] = pay_list
+    #     else:
+    #         user_buy_dict[str(record.userId)] = [record.clazzId]
+    # content_list = []
+    # for user_id in user_buy_dict:
+    #     user_pay_list = user_buy_dict[user_id]
+    #     clazz = "|".join(user_pay_list)
+    #     content = [user_id, clazz]
+    #     content_list.append(content)
+    # export_service.export2csv("user_pay.csv", content_list)
+
+    # 输出指定班级的购买记录
+    # clazz_object = clazz_service.get_clazz_by_name("安妮的笔译训练班")
+    # record_list = purchase_service.get_purchase_records_for_clazz(clazz_object.id)
+    # user_ids = set(record.userId for record in record_list)
+    # users = user_service.get_users_by_ids(list(user_ids))
+    # content_list = []
+    # for user in users:
+    #     content_list.append(user.csv_format())
+    # export_service.export2csv("user_pay.csv", content_list)
+
+    # 输出所有用户信息
+    # users = user_service.get_users()
+    # content_list = []
+    # for user in users:
+    #     content_list.append(user.csv_format(privacy=True))
+    # export_service.export2csv("users.csv", content_list)
+
+    # 输出指定时间内关注的用户（未购买）
+    # users_no_bought = user_service.get_users(start_date=datetime.date(2017, 9, 1))
+    # records = purchase_service.get_purchase_records(start_date=datetime.date(2017, 9, 1))
+    # user_bought = set()
+    # for record in records:
+    #     user_bought.add(record.userId)
+    # for user in users_no_bought:
+    #     if user.id in user_bought:
+    #         users_no_bought.remove(user)
+    # content_list = []
+    # for user in users_no_bought:
+    #     content_list.append(user.csv_format())
+    # export_service.export2csv("users_no_bought.csv", content_list)
+
+    # 输出指定时间内购买过的用户
+    record_list = purchase_service.get_purchase_records(start_date=datetime.date(2017, 1, 1))
+    user_buy_dict = dict()
+    for record in record_list:
+        if str(record.userId) in user_buy_dict:
+            pay_list = user_buy_dict[str(record.userId)]
+            pay_list.append(record.clazzId)
+            user_buy_dict[str(record.userId)] = pay_list
+        else:
+            user_buy_dict[str(record.userId)] = [record.clazzId]
+    content_list = []
+    for user_id in user_buy_dict:
+        user = user_service.get_user_by_id(user_id)
+        if user is None:
+            continue
+        user_pay_list = user_buy_dict[user_id]
+        clazz_infos = clazz_service.get_clazz_by_ids(user_pay_list)
+        clazz = "|".join([clazz_info.name for clazz_info in clazz_infos])
+        content = [user.id, user.name, user.student_number, clazz]
+        content_list.append(content)
+    export_service.export2csv("user_pay.csv", content_list)

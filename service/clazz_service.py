@@ -40,6 +40,12 @@ def get_clazz_by_name(clazz_name):
     return Clazz(clazz_result)
 
 
+def get_clazz_by_id(clazz_mongoId):
+    model = MongoConnModel.get_instance()
+    clazz_result = model.find("Clazz", {"_id": ObjectId(clazz_mongoId)}, multi=False)
+    return Clazz(clazz_result)
+
+
 def get_clazz_by_ids(clazz_id_list):
     clazz_objectId_list = []
     for clazz_id in clazz_id_list:

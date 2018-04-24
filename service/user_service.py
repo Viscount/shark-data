@@ -16,6 +16,15 @@ def get_users(start_date=datetime.date(2016, 1, 1), end_date=datetime.date.today
     return user_obj_list
 
 
+def get_user_by_id(id):
+    model = MysqlConnModel.get_instance()
+    user = model.find("user", {"id": id}, multi=False)
+    if len(user) < 1:
+        return None
+    else:
+        return User(user[0])
+
+
 def get_users_by_ids(id_list):
     model = MysqlConnModel.get_instance()
     user_list = model.find("user", {"id": id_list}, multi=True)

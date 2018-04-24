@@ -10,6 +10,7 @@ class ClazzAccount(object):
         self.joinDate = query_result_item[4]
         self.userId = query_result_item[7]
         self.clazzId = query_result_item[9]
+        self.endDate = query_result_item[11]
         self.createdAt = query_result_item[16]
 
 
